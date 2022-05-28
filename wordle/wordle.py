@@ -47,7 +47,8 @@ class Wordle:
                 if self.keyboard_colors[s[0]] == 1:
                     self.keyboard_colors[s[0]] = 2
             else:
-                self.keyboard_colors[s[0]] = 0
+                if (s[0] not in fixed.values()) and (s[0] not in anti_position.values()):
+                    self.keyboard_colors[s[0]] = 0
 
         self.guesses.append("".join(f"""{col}{ch}""" for col,ch in zip(colors,guess)))
 
