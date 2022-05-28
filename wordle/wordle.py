@@ -1,12 +1,14 @@
 from colorama import Fore, Style
 from string import ascii_lowercase
 
-c_map = {1:Fore.BLACK , 0:Fore.WHITE, 2:Fore.YELLOW, 3:Fore.GREEN}
-
 class Wordle:
 
-    def __init__(self, target_word, accepted_words):
-        # assert target_word in accepted_words
+    def __init__(self, target_word, accepted_words, is_notebook=False):
+
+        self.c_map = {0:Fore.BLACK , 1:Fore.WHITE, 2:Fore.YELLOW, 3:Fore.GREEN}
+        if is_notebook:
+            self.c_map[0] = Fore.WHITE
+            self.c_map[1] = Fore.BLACK
 
         self.keyboard_colors = {}
         for ch in ascii_lowercase:
@@ -20,7 +22,7 @@ class Wordle:
         for word in self.guesses:
             print(word)
         print()
-        my_str = "".join(f"""{c_map[self.keyboard_colors[ch]]}{ch}""" for ch in ascii_lowercase)
+        my_str = "".join(f"""{self.c_map[self.keyboard_colors[ch]]}{ch}""" for ch in ascii_lowercase)
         print(my_str+Style.RESET_ALL+"\n")
 
     def add_guess(self, guess):
