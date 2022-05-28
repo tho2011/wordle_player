@@ -1,9 +1,17 @@
 from colorama import Fore, Style
+from string import ascii_lowercase
 
+c_map = {1:Fore.BLACK , 0:Fore.WHITE, 2:Fore.YELLOW, 3:Fore.GREEN}
 
 class Wordle:
+
     def __init__(self, target_word, accepted_words):
-        assert target_word in accepted_words
+        # assert target_word in accepted_words
+
+        self.keyboard_colors = {}
+        for ch in ascii_lowercase:
+            self.keyboard_colors[ch] = 1
+
         self.guesses = []
         self.target_word = target_word
         self.accepted_words = accepted_words
@@ -12,6 +20,8 @@ class Wordle:
         for word in self.guesses:
             print(word)
         print()
+        my_str = "".join(f"""{c_map[self.keyboard_colors[ch]]}{ch}""" for ch in ascii_lowercase)
+        print(my_str+Style.RESET_ALL+"\n")
 
     def add_guess(self, guess):
         counts = {}
@@ -23,6 +33,7 @@ class Wordle:
         for i, ch in enumerate(guess):
             if ch == self.target_word[i]:
                 colors[i] = Fore.GREEN
+                self.keyboard_colors[ch] = 3
             else:
                 target_rem.append(self.target_word[i])
                 guess_rem.append((ch, i))
@@ -31,22 +42,25 @@ class Wordle:
             if s[0] in target_rem:
                 colors[s[1]] = Fore.YELLOW
                 target_rem.remove(s[0])
+                if self.keyboard_colors[s[0]] == 1:
+                    self.keyboard_colors[s[0]] = 2
+            else:
+                self.keyboard_colors[s[0]] = 0
 
-        self.guesses.append(
-            f"{colors[0]}{guess[0]}{colors[1]}{guess[1]}{colors[2]}{guess[2]}{colors[3]}{guess[3]}{colors[4]}{guess[4]}{Style.RESET_ALL}"
-        )
+        self.guesses.append("".join(f"""{col}{ch}""" for col,ch in zip(colors,guess)))
 
     def play(self):
         while True:
-            self.show()
             guess = input(f"Input guess {len(self.guesses) + 1}: ")
             print()
-            while (guess not in self.accepted_words) or (guess in self.guesses):
+            while (guess not in self.accepted_words):
                 print("Invalid guess.")
                 guess = input(f"Input guess {len(self.guesses) + 1}: ")
                 print()
 
             self.add_guess(guess)
+
+            self.show()
 
             if guess == self.target_word:
                 try_num = len(self.guesses)
@@ -58,13 +72,17 @@ class Wordle:
                 break
 
             if len(self.guesses) == 6:
+                print(self.target_word)
                 break
 
-        self.show()
+        # self.show()
+        # print(self.target_word)
         print("Game Over")
 
 
 def main():
+    # rooto is not a real word but we used it to test
+    # the logic for yellow coloring
     valid_list = [
         "acids",
         "belts",
