@@ -39,6 +39,7 @@ class Wordle:
         self.guesses = []
         self.target_word = target_word
         self.accepted_words = accepted_words
+        self.confirmed_chars = set()
         self.initial_guess = initial_guess
         self.candidates = accepted_words.copy()
         self.display_keyboard = display_keyboard
@@ -67,6 +68,7 @@ class Wordle:
                 colors[i] = Fore.GREEN
                 self.keyboard_colors[ch] = 3
                 fixed[i] = ch
+                self.confirmed_chars.add(ch)
             else:
                 target_rem.append(self.target_word[i])
                 guess_rem.append((ch, i))
@@ -76,10 +78,11 @@ class Wordle:
                 colors[s[1]] = Fore.YELLOW
                 anti_position[s[1]] = s[0]
                 target_rem.remove(s[0])
+                self.confirmed_chars.add(s[0])
                 if self.keyboard_colors[s[0]] == 1:
                     self.keyboard_colors[s[0]] = 2
             else:
-                if (s[0] not in fixed.values()) and (s[0] not in anti_position.values()):
+                if s[0] not in self.confirmed_chars:
                     self.keyboard_colors[s[0]] = 0
                     exclude.add(s[0])
 
