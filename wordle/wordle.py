@@ -17,6 +17,7 @@ class Wordle:
         self.guesses = []
         self.target_word = target_word
         self.accepted_words = accepted_words
+        self.confirmed_chars = set()
 
     def show(self):
         for word in self.guesses:
@@ -32,13 +33,11 @@ class Wordle:
         target_rem = []
         guess_rem = []
 
-        exists = set()
-
         for i, ch in enumerate(guess):
             if ch == self.target_word[i]:
                 colors[i] = Fore.GREEN
                 self.keyboard_colors[ch] = 3
-                exists.add(ch)
+                self.confirmed_chars.add(ch)
             else:
                 target_rem.append(self.target_word[i])
                 guess_rem.append((ch, i))
@@ -47,11 +46,11 @@ class Wordle:
             if s[0] in target_rem:
                 colors[s[1]] = Fore.YELLOW
                 target_rem.remove(s[0])
-                exists.add(s[0])
+                self.confirmed_chars.add(s[0])
                 if self.keyboard_colors[s[0]] == 1:
                     self.keyboard_colors[s[0]] = 2
             else:
-                if s[0] not in exists:
+                if s[0] not in self.confirmed_chars:
                     self.keyboard_colors[s[0]] = 0
 
         self.guesses.append("".join(f"""{col}{ch}""" for col,ch in zip(colors,guess)))
