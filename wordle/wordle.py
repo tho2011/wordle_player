@@ -32,10 +32,13 @@ class Wordle:
         target_rem = []
         guess_rem = []
 
+        exists = set()
+
         for i, ch in enumerate(guess):
             if ch == self.target_word[i]:
                 colors[i] = Fore.GREEN
                 self.keyboard_colors[ch] = 3
+                exists.add(ch)
             else:
                 target_rem.append(self.target_word[i])
                 guess_rem.append((ch, i))
@@ -44,10 +47,11 @@ class Wordle:
             if s[0] in target_rem:
                 colors[s[1]] = Fore.YELLOW
                 target_rem.remove(s[0])
+                exists.add(s[0])
                 if self.keyboard_colors[s[0]] == 1:
                     self.keyboard_colors[s[0]] = 2
             else:
-                if (s[0] not in fixed.values()) and (s[0] not in anti_position.values()):
+                if s[0] not in exists:
                     self.keyboard_colors[s[0]] = 0
 
         self.guesses.append("".join(f"""{col}{ch}""" for col,ch in zip(colors,guess)))
